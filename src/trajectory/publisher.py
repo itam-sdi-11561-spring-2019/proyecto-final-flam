@@ -4,6 +4,7 @@ import rospy
 from geometry_msgs.msg import Pose2D
 from graphical_client.msg import Pose2D_Array
 from AStar import run_astar
+import pickle as pkl
 
 obstacles = {}
 
@@ -40,6 +41,9 @@ def obstacle_position(msg, args):
 
     if not ready and len(obstacles.keys()) == no_robots:
         ready = True
+        file = open("bag.pkl","wb")
+        pkl.dump(obstacles,file)
+        file.close
         calculate_trajectory()
 
 def calculate_trajectory():
