@@ -67,7 +67,7 @@ def receiver():
     rospy.Subscriber("/ball", Pose2D, final_position)
     
     _id = "/b_r{}"
-    for i in range(no_robots):
+    for i in range(no_topics):
         obstacle_id = _id.format(i)
         #Subscribe to n obstacles
         rospy.Subscriber(obstacle_id, Pose2D, obstacle_position,(obstacle_id))
