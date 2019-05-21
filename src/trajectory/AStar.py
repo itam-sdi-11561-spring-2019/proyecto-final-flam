@@ -46,10 +46,10 @@ def print_path(maze,path,start,end,name):
     final_maze = maze.copy()
     
     for p in path:
-        final_maze[p[0]][p[1]] = 0.5
+        final_maze[p[0]][p[1]] = 0.7
         
     final_maze[start[0]][start[1]] = 0.8
-    final_maze[end[0]][end[1]] = 0.6
+    final_maze[end[0]][end[1]] = 0.85
     
     #sns.heatmap(final_maze, linewidths = 0.01, cmap = cmap)
     plt.imshow(final_maze, cmap = "viridis", interpolation = "nearest")
@@ -99,8 +99,14 @@ def check_neighbors(obstacle):
     global maze
     center_pos = map_position(obstacle)
     
-    maze[center_pos[0]][center_pos[1]] = 0.3
+    print obstacle
     print center_pos
+
+    if not validate(center_pos):
+        print 'Out of bounds'
+        break
+    
+    maze[center_pos[0]][center_pos[1]] = 0.3
     
     for new_position in get_neighbors():
         #Get node position
@@ -240,8 +246,7 @@ def run_astar(obstacles, start, end):
 
     for index,obstacle in enumerate(obstacles):
         print '\nObstacle {}'.format(index)
-        if validate(obstacle):
-            check_neighbors(obstacle)
+        check_neighbors(obstacle)
 
     print_path(maze,[],start_pos,end_pos, 'og.png')
 
