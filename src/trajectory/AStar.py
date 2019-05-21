@@ -104,7 +104,7 @@ def check_neighbors(obstacle):
 
     if not validate(center_pos):
         print 'Out of bounds'
-        break
+        return None
     
     maze[center_pos[0]][center_pos[1]] = 0.3
     
