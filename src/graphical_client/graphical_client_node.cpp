@@ -147,7 +147,7 @@ int main(int argc, char **argv){
         ros::init(argc,argv, "graphical_client_node");
         ros::NodeHandle nh;
         ROS_INFO_STREAM("graphical_client_node initialized");
-		ros::Subscriber sub_ball_pos;
+	ros::Subscriber sub_ball_pos;
         std::vector<ros::Subscriber> vision_sub_yr;
         std::vector<ros::Subscriber> vision_sub_br;
 	// std::vector<ros::Subscriber> traj_sub_yr;
