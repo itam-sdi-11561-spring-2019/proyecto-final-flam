@@ -10,7 +10,10 @@ obstacles = {}
 pos = Pose2D()
 end = Pose2D()
 
-no_robots = 9
+
+no_topics = 9
+no_robots = 5
+
 ready = False
 
 def robot_position(msg):

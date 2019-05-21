@@ -7,8 +7,8 @@ import matplotlib.pyplot as plt
 #--------------------------------
 #           GLOBAL VARIABLES  
 #--------------------------------
-x = 3000
-y = 4000
+x = 8000
+y = 8000
 
 finesse = 150
 width = int(math.ceil(150/finesse))
@@ -25,6 +25,22 @@ cmap = "GnBu"
 #--------------------------------
 #         AUX FUNCTIONS 
 #--------------------------------
+
+def correct_position(pos):
+    if pos[0] < 0:
+        pos[0] = 0
+    elif pos[0] >= m:
+        pos[0] = m -1
+
+    if pos[1] < 0:
+        pos[1] = 0
+    elif pos[1] >= n:
+        pos[1] = n -1
+
+    return pos
+
+def validate(obstacle):
+    return obstacle[0] >= 0 and obstacle[0] < m and obstacle[1] >= 0 or obstacle[1] < n
 
 def print_path(maze,path,start,end,name):
     final_maze = maze.copy()
@@ -60,7 +76,7 @@ def map_position(position):
     j = math.floor(position[0]/finesse)
     i = math.floor((-position[1]+top)/finesse)
     
-    return i,j
+    return int(i),int(j)
 
 def map_inverse(matrix_pos):
     
@@ -127,6 +143,12 @@ class Node():
 
 
 def astar(maze, start, end):
+    print "A STAR FUNCTION"
+
+    print 'START: {}'.format(start)
+
+    print 'END: {}'.format(end)
+
     start_node = Node(None, position = start)
     start_node.g = start_node.h = start_node.f = 0
     end_node = Node(None, position = end)
@@ -210,13 +232,16 @@ def astar(maze, start, end):
 #          MAIN 
 #--------------------------------
 def run_astar(obstacles, start, end):
-
     start_pos = map_position(start)
     end_pos = map_position(end)
 
+    start_pos = correct_position(start_pos)
+    end_pos = correct_position(end_pos)
+
     for index,obstacle in enumerate(obstacles):
         print '\nObstacle {}'.format(index)
-        check_neighbors(obstacle)
+        if validate(obstacle):
+            check_neighbors(obstacle)
 
     print_path(maze,[],start_pos,end_pos, 'og.png')
 
@@ -225,20 +250,3 @@ def run_astar(obstacles, start, end):
     print_path(maze,path,start_pos,end_pos, 'solved.png')
 
     return final_path(path)
-    
-'''
-obstacles = [(1180.71,1206.32),
-            (272,745),
-            (1533.26,-33.17),
-            (848,-311),
-            (898.45,1471.614),
-            (1571.51,-1008.25),
-            (1900,-736.86),
-            (1836.01,1271),
-            (315.69,1473.4)]
-
-
-
-end = (1421.43,-1534.76)
-start = (1048.18,1337.08)
-'''
