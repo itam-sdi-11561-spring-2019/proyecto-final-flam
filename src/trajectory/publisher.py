@@ -42,7 +42,11 @@ def obstacle_position(msg, args):
     if not ready and len(obstacles.keys()) == no_robots:
         ready = True
         file = open("bag.pkl","wb")
-        pkl.dump(obstacles,file)
+
+        bag = {"obstacles": obstacles,
+        "start": pos,
+        "end": end}
+        pkl.dump(bag,file)
         file.close
         calculate_trajectory()
 
