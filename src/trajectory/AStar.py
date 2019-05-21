@@ -11,7 +11,7 @@ x = 3000
 y = 4000
 
 finesse = 150
-width = math.ceil(150/finesse)
+width = int(math.ceil(150/finesse))
 
 m = math.floor(y/finesse)
 n = math.floor(x/finesse)
