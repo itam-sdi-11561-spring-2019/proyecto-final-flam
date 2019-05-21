@@ -1,14 +1,14 @@
 #Imports
 import numpy as np
-import seaborn as sns
+#import seaborn as sns
 import math
 import matplotlib.pyplot as plt
 
 #--------------------------------
 #           GLOBAL VARIABLES  
 #--------------------------------
-x = 2000
-y = 3200
+x = 3000
+y = 4000
 
 finesse = 150
 width = math.ceil(150/finesse)
@@ -35,7 +35,8 @@ def print_path(maze,path,start,end,name):
     final_maze[start[0]][start[1]] = 0.8
     final_maze[end[0]][end[1]] = 0.6
     
-    sns.heatmap(final_maze, linewidths = 0.01, cmap = cmap)
+    #sns.heatmap(final_maze, linewidths = 0.01, cmap = cmap)
+    plt.imshow(final_maze, cmap = "viridis", interpolation = "nearest")
     plt.savefig(name,dpi = 200)
 
 
