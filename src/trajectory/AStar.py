@@ -222,7 +222,8 @@ def astar(maze, start, end):
                     continue
 
             # Create the f, g, and h values
-            child.g = current_node.g + 1
+            #child.g = current_node.g + 1
+            child.g = heuristic(child,current_node)
             child.h = heuristic(child,end_node)
             child.f = child.g + child.h
 
