@@ -4,6 +4,7 @@ import rospy
 from geometry_msgs.msg import Pose2D
 from graphical_client.msg import Pose2D_Array
 from AStar import run_astar
+from xbee_communication import run
 import pickle as pkl
 
 obstacles = {}
@@ -61,9 +62,18 @@ def calculate_trajectory():
     start = (pos.x, pos.y)
     destination = (end.x,end.y)
 
-    trajectory = run_astar(obstacles_pos, start, destination)
+    if len(obstacles_pos) == 0:
+        trajectory = [start,destination]
+    else:
+        trajectory = run_astar(obstacles_pos, start, destination)
     
     print trajectory
+
+    run(trajectory)
+
+#---------------------------------------------------------
+#               ROS communication
+#---------------------------------------------------------
 
 def receiver():
     rospy.init_node('receiver', anonymous=True)

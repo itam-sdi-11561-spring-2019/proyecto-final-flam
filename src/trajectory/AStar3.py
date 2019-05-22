@@ -7,8 +7,8 @@ import matplotlib.pyplot as plt
 #--------------------------------
 #           GLOBAL VARIABLES  
 #--------------------------------
-x = 8000
-y = 8000
+x = 4000
+y = 4000
 
 finesse = 150
 width = int(math.ceil(150/finesse))
@@ -87,21 +87,21 @@ def is_blocked(obstacle, matrix_pos):
     
     return 1 if distance > 150 else 0 
 
-
 #----------------------------------------------------------------
 #       HEURISTICS AND LOGIC IMPLEMENTATION
 #----------------------------------------------------------------
 def heuristic(current, end):
-    #h = ((current.position[0] - end.position[0]) ** 2) + ((current.position[1] - end.position[1]) ** 2)
+    #h = 1/math.sqrt(((current.position[0] - end.position[0]) ** 2) + ((current.position[1] - end.position[1]) ** 2))
     #h = max(np.abs(current.position[0] - end.position[0]),np.abs(current.position[1] - end.position[1]))
-    #h = math.sqrt(((current.position[0] - end.position[0]) ** 2) + ((current.position[1] - end.position[1]) ** 2))
-    h = ((current.position[0] - end.position[0]) ** 2) + ((current.position[1] - end.position[1]) ** 2)
+    h = np.abs(current.position[0] - end.position[0]) + np.abs(current.position[1] - end.position[1])
     return h
 
 def g(current, child):
     #g = 1/math.sqrt(((current.position[0] - child.position[0]) ** 2) + ((current.position[1] - child.position[1]) ** 2))
     #g = math.sqrt(((current.position[0] - child.position[0]) ** 2) + ((current.position[1] - child.position[1]) ** 2))
-    g = ((current.position[0] - end.position[0]) ** 2) + ((current.position[1] - end.position[1]) ** 2)
+    g = ((current.position[0] - child.position[0]) ** 2) + ((current.position[1] - child.position[1]) ** 2)
+    #g = np.abs(current.position[0] - child.position[0]) + np.abs(current.position[1] - child.position[1])
+    #g  =  max(np.abs(current.position[0] - child.position[0]),np.abs(current.position[1] -  child.position[1]))
     return g
 
 
@@ -109,11 +109,11 @@ def check_neighbors(obstacle):
     global maze
     center_pos = map_position(obstacle)
     
-    print obstacle
-    print center_pos
+    print(obstacle)
+    print(center_pos)
 
     if not validate(center_pos):
-        print 'Out of bounds'
+        print('Out of bounds')
         return None
     
     maze[center_pos[0]][center_pos[1]] = 0.3
@@ -123,12 +123,12 @@ def check_neighbors(obstacle):
         pos = (center_pos[0] + new_position[0], center_pos[1] + new_position[1])
 
         if pos[0] > (len(maze) - 1) or pos[0] < 0 or pos[1] > (len(maze[0]) - 1) or pos[1] < 0:
-            print 'continue'
+            print('continue')
             continue
             
         res = is_blocked(obstacle, pos) 
         
-        print 'Position {} is {}'.format(pos,res)
+        print('Position {} is {}'.format(pos,res))
             
         maze[pos[0]][pos[1]] = res  
 
@@ -158,11 +158,11 @@ class Node():
         return self.position == other.position
 
 def astar(maze, start, end):
-    print "A STAR FUNCTION"
+    print("A STAR FUNCTION")
 
-    print 'START: {}'.format(start)
+    print('START: {}'.format(start))
 
-    print 'END: {}'.format(end)
+    print('END: {}'.format(end))
 
     start_node = Node(None, position = start)
     start_node.g = start_node.h = start_node.f = 0
@@ -248,10 +248,8 @@ def astar(maze, start, end):
 #          MAIN 
 #--------------------------------
 def run_astar(obstacles, start, end):
-    global maze
-
     #initialize maze
-    maze = np.ones(shape = (m,n))
+    #maze = np.ones(shape = (m,n))
 
     start_pos = map_position(start)
     end_pos = map_position(end)
@@ -260,7 +258,7 @@ def run_astar(obstacles, start, end):
     end_pos = correct_position(end_pos)
 
     for index,obstacle in enumerate(obstacles):
-        print '\nObstacle {}'.format(index)
+        print('\nObstacle {}'.format(index))
         check_neighbors(obstacle)
 
     print_path(maze,[],start_pos,end_pos, 'og.png')
