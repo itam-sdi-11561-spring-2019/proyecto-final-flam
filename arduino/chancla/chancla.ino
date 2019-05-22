@@ -92,6 +92,8 @@ void loop(){
   // Cada sample_time ms calcula velocidad y PID
   if(millis() >= t0 + sample_time){
     
+    Serial.print("\nTiempo: ");
+    Serial.print(sample_time);
     Serial.print("\nenc derecho\n");
     Serial.print(counterEncDer);
     
