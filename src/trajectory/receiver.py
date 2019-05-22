@@ -90,7 +90,7 @@ def receiver():
         #Subscribe to n obstacles
         rospy.Subscriber(obstacle_id, Pose2D, obstacle_position,(obstacle_id))
     
-    rate = rospy.Rate(1) # 10hz
+    rate = rospy.Rate(2) # 10hz
 
     while not rospy.is_shutdown():
         rate.sleep()
