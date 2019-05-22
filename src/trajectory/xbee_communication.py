@@ -11,17 +11,24 @@ PORT = '/dev/ttyUSB0'
 BAUD = 9600
 serial_port = serial.Serial(PORT, BAUD)
 
+
+
 path = None
 tolerance = 20
 
-def get_theta(start,end):
-    x = end[0] - start[0]
-    y = end[1] - start[1]
-
-    return math.atan2(y,x)
-
 def get_distance(start,end):
     return math.sqrt(math.power(start[0] - end[0],2) + math.power(start[1] - end[1],2))
+
+def get_vel(omega):
+    r = 21
+    v = 630
+    matrix = np.matrix('1 -57.5; 1 57.5')
+
+    vector = np.array([v, omega])
+    vel = (1/r) * np.dot(matrix, omega)
+
+    send_signal(vel[0])
+    send_signal(vel[1])
 
 # get robot's current position and adjust angle to target
 def update_robot(pos):
@@ -30,24 +37,29 @@ def update_robot(pos):
 
     distance_next = get_distance(current_pos, path[0])
 
-    if distance_next < tolerance and len(path) > 1:
+    if distance_next < tolerance: #and len(path) > 1:
         path.pop(0)
+    '''
     elif len(path) == 1 and distance_next < 5:
         path.pop(0)
+    '''
 
     if len(path) > 0:
-        new_theta = math.pi/2 - get_theta(current_pos, path[0])
+        theta = pos.theta
     else:
-        new_theta = 0
+        theta = -1
 
-    send_signal(new_theta)
+    get_vel(theta)
 
 # send new angle via XBee
-def send_signal(theta):
+def send_signal(vel):
     global serial
-    print 'Sending {} angle'.format(theta)
+    print 'Sending {} as vel'.format(vel)
 
-    serial.write(theta)
+    sign = 0 if vel > 0 else 1
+
+    serial.write(vel)
+    serial.write(sign)
 
 
 def run(final_path):

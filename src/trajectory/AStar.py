@@ -20,6 +20,9 @@ top = (m*finesse)/2
 
 maze = np.ones(shape = (m,n))
 
+_start = None
+_end = None
+
 cmap = "GnBu"
 
 #--------------------------------
@@ -132,11 +135,32 @@ def check_neighbors(obstacle):
             
         maze[pos[0]][pos[1]] = res  
 
+def get_theta(start, end):
+    x = end[0] - start[0]
+    y = end[1] - start[1]
+
+    theta = 0
+
+    if y >= 0:
+        theta = math.arctan2(x,y)
+    else:
+        theta = math.pi * math.arctan2(x,y)
+
+    return theta
+
 def final_path(path):
     trajectory = []
+    trajectory.append((_start[0], _start[1], 0))
 
-    for p in path:
-        trajectory.append(map_inverse(p))
+    for i,p in enumerate(path[1:-1]):
+        pos = map_inverse(p)
+        pos_ant = (trajectory[i][0], trajectory[i][1])
+        theta = get_theta(pos_ant,pos)
+
+        trajectory.append((pos[0], pos[1], theta))
+
+    theta = get_theta(trajectory[-1], _end)
+    trajectory.append((_end[0], _end[1], theta))
     
     return trajectory
 
@@ -249,6 +273,11 @@ def astar(maze, start, end):
 #--------------------------------
 def run_astar(obstacles, start, end):
     global maze
+    global _start
+    global _end
+
+    _start = start
+    _end = end
 
     #initialize maze
     maze = np.ones(shape = (m,n))
