@@ -27,8 +27,8 @@ def get_vel(omega):
     vector = np.array([v, omega])
     vel = (1/r) * np.dot(matrix, omega)
 
-    send_signal(vel[0])
     send_signal(vel[1])
+    send_signal(vel[0])
 
 # get robot's current position and adjust angle to target
 def update_robot(pos):
@@ -56,7 +56,7 @@ def send_signal(vel):
     global serial
     print 'Sending {} as vel'.format(vel)
 
-    sign = 0 if vel > 0 else 1
+    sign = 1 if vel > 0 else 0
 
     serial.write(vel)
     serial.write(sign)
