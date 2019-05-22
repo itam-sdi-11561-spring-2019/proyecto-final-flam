@@ -3,3 +3,7 @@ src/CMakeLists.txt
 build/*
 devel/*
 install/*
+
+.DS_Store
+
+.ipynb_checkpoints/
