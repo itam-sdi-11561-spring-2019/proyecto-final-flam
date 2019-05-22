@@ -1,3 +1,11 @@
+
+#include <SoftwareSerial.h>
+int TX = 50;
+int RX = 51;
+int bauds = 9600;
+int cmd_right, cmd_left;
+SoftwareSerial xbee(RX, TX);
+
 int encoderDer = 42;
 int encoderIzq = 44;
 int counterEncDer = 0;
@@ -8,6 +16,10 @@ int encDerVal = 0;
 int encIzqVal = 0;
 
 int currVal = 0;
+
+// Direccion (1 adelante, -1 atras)
+int dir_1 = 1;
+int dir_2 = 1;
 
 // Motor 1 es der
 int motor1_red = 11;
@@ -22,15 +34,15 @@ double targetR = 0;
 double targetL = 0;
 
 // Cada cuanto revizar velocidad (en milis)
-int sample_time = 100;
+int sample_time = 250;
 
-double kpr = 1.2;
-double kir = 1.2;
-double kdr = 0.2;
+double kpr = .7;
+double kir = .7;
+double kdr = 0.15;
 
-double kpl = 1;
-double kil = 1.4;
-double kdl = 0.2;
+double kpl = .9;
+double kil = .6;
+double kdl = 0.1;
 
 double err_r = 0;
 double sum_err_r = 0;
@@ -47,6 +59,10 @@ int out_r = 0;
 int out_l = 0;
 
 void setup(){
+  //xbee
+  xbee.begin(bauds);
+  
+  
   pinMode(encoderDer, INPUT);
   encDerVal = digitalRead(encoderDer);
   pinMode(encoderIzq, INPUT);
@@ -66,7 +82,7 @@ void setup(){
   
   t0 = millis();
   
-  Serial.begin(9600);
+  //Serial.begin(9600);
 }
 
 void loop(){
@@ -92,19 +108,19 @@ void loop(){
   // Cada sample_time ms calcula velocidad y PID
   if(millis() >= t0 + sample_time){
     
-    Serial.print("\nTiempo: ");
-    Serial.print(sample_time);
-    Serial.print("\nenc derecho\n");
-    Serial.print(counterEncDer);
+    //xbee.print("Tiempo: ");
+    //xbee.println(sample_time);
+    //xbee.print("enc azul: ");
+    //xbee.println(counterEncDer);
     
-    Serial.print("\nenc izq\n");
-    Serial.print(counterEncIzq);
+    //xbee.print("enc rojo: ");
+    //xbee.println(counterEncIzq);
     
     //PID
     
     // Error actual es target - velocidad en ticks/segundo
-    err_r = targetR - (sample_time/1000)*counterEncDer;
-    err_l = targetL - (sample_time/1000)*counterEncIzq;
+    err_r = targetR - (1000/sample_time)*counterEncDer*dir_1;
+    err_l = targetL - (1000/sample_time)*counterEncIzq*dir_2;
 
     // Error integral
     sum_err_r += err_r;
@@ -126,24 +142,49 @@ void loop(){
     if (pid_r >= 0){
       analogWrite(motor1_red, out_r);
       analogWrite(motor1_white, 0);
+      dir_1 = 1;
     }else{
       analogWrite(motor1_red, 0);
       analogWrite(motor1_white, out_r);
+      dir_1 = -1;
     }
     
     // Por ahora, solo hay targets positivos
     if (pid_l >= 0){
       analogWrite(motor2_red, out_l);
       analogWrite(motor2_white, 0);
+      dir_2 = 1;
     }else{
       analogWrite(motor2_red, 0);
       analogWrite(motor2_white, out_l);
+      dir_2 = -1;
     }
 
     // Volver a empezar tiempo para calcular velocidad
     t0 = millis();
     counterEncDer = 0;
     counterEncIzq = 0;
+  }
+  
+  if(xbee.available()>1){
+    xbee.write(0xFF);
+    
+    cmd_right = xbee.read();
+    dir_1 = xbee.read() == 0 ? -1 : 1;
+    cmd_left = xbee.read();
+    dir_2 = xbee.read() == 0 ? -1 : 1;
+    
+    xbee.write(cmd_right);
+    xbee.println(dir_1);
+    xbee.write(cmd_left);
+    xbee.println(dir_2);
+    
+    targetR = (int) cmd_right;
+    targetL = (int) cmd_left;
+    
+    xbee.println(targetR);
+    xbee.println(targetL);
+    
   }
 
 }
