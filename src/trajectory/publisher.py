@@ -44,8 +44,8 @@ def obstacle_position(msg, args):
         file = open("bag.pkl","wb")
 
         bag = {"obstacles": obstacles.copy(),
-        "start": pos.copy(),
-        "end": end.copy()}
+        "start": pos,
+        "end": end}
         pkl.dump(bag,file)
         file.close
         calculate_trajectory()
