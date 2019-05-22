@@ -142,9 +142,9 @@ def get_theta(start, end):
     theta = 0
 
     if y >= 0:
-        theta = math.arctan2(x,y)
+        theta = math.atan2(x,y)
     else:
-        theta = math.pi * math.arctan2(x,y)
+        theta = math.pi * math.atan2(x,y)
 
     return theta
 
