@@ -104,7 +104,7 @@ def heuristic(current, end):
 def g(current, child):
     #g = 1/math.sqrt(((current.position[0] - child.position[0]) ** 2) + ((current.position[1] - child.position[1]) ** 2))
     #g = math.sqrt(((current.position[0] - child.position[0]) ** 2) + ((current.position[1] - child.position[1]) ** 2))
-    g = ((current.position[0] - end.position[0]) ** 2) + ((current.position[1] - end.position[1]) ** 2)
+    g = ((current.position[0] - child.position[0]) ** 2) + ((current.position[1] - child.position[1]) ** 2)
     return g
 
 
