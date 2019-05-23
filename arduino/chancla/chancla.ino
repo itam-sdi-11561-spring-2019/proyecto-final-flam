@@ -166,7 +166,7 @@ void loop(){
     counterEncIzq = 0;
   }
   
-  if(xbee.available()>1){
+  if(xbee.available()>3){
     xbee.write(0xFF);
     
     cmd_right = xbee.read();
@@ -179,8 +179,8 @@ void loop(){
     xbee.write(cmd_left);
     xbee.println(dir_2);
     
-    targetR = (int) cmd_right;
-    targetL = (int) cmd_left;
+    targetR = ((int) cmd_right) * dir_1;
+    targetL = ((int) cmd_left) * dir_2;
     
     xbee.println(targetR);
     xbee.println(targetL);
