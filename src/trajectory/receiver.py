@@ -16,7 +16,7 @@ obstacles = {}
 pos = Pose2D()
 end = Pose2D()
 no_topics = 9
-no_robots = 5
+no_robots = 6
 ready = False
 
 #---------------------------------------------------------

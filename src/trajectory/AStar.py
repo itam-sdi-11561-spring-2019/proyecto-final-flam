@@ -88,7 +88,7 @@ def is_blocked(obstacle, matrix_pos):
     
     distance = np.sqrt(np.power(x - obstacle[0],2) + np.power(y - obstacle[1],2))
     
-    return 1 if distance > 150 else 0 
+    return 1 if distance > 200 else 0 
 
 
 #----------------------------------------------------------------
@@ -144,6 +144,8 @@ def get_theta(start, end):
         theta = math.atan2(x,y)
     else:
         theta = math.pi + math.atan2(x,y)
+    
+    theta = theta if theta <= 2*math.pi else 2*math.pi    
 
     return theta
 

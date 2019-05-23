@@ -11,7 +11,7 @@ from geometry_msgs.msg import Pose2D
 # GLOBAL VARIABLES
 PORT = '/dev/ttyUSB0'
 BAUD = 9600
-#serial_port = serial.Serial(PORT, BAUD)
+serial_port = serial.Serial(PORT, BAUD)
 
 path = None
 ready = False
@@ -22,7 +22,7 @@ def get_distance(start,end):
 
 def get_vel(omega):
     r = 21.0
-    v = 630.0
+    v = 570.0
     matrix = np.matrix('1 -57.5; 1 57.5')
 
     if omega == -1:
@@ -33,19 +33,19 @@ def get_vel(omega):
 
     print "Sending " + str(vel) + " as vel"
 
-    #send_signal(vel)
+    send_signal(vel)
 
 # send new angle via XBee
 def send_signal(vel):
     global serial
 
-    right = np.uint8(vel[1])
-    dir_r = np.unit8(1 if vel[1] > 0 else 0)
+    right = np.uint8(vel[0,1])
+    dir_r = np.uint8(1 if vel[0,1] > 0 else 0)
 
-    left = np.uint8(vel[0])
-    dir_l = np.unit8(1 if vel[0] > 0 else 0)
+    left = np.uint8(vel[0,0])
+    dir_l = np.uint8(1 if vel[0,0] > 0 else 0)
 
-    serial.write(bytearray([right, dir_r, left, dir_l]))
+    serial_port.write(bytearray([right, dir_r, left, dir_l]))
 
 #--------------------------------------------------------
 #                   CALLBACKS
@@ -74,6 +74,7 @@ def update_robot(pos):
             print "Robot angle " + str(pos.theta)
             print "Target angle" + str(path[0][2])
             theta = path[0][2] - pos.theta
+            theta = theta % (2*math.pi)
         else:
             theta = -1
 
