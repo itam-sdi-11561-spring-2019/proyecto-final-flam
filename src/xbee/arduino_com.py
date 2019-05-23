@@ -10,7 +10,7 @@ from graphical_client.msg import Pose2D_Array
 # GLOBAL VARIABLES
 PORT = '/dev/ttyUSB0'
 BAUD = 9600
-serial_port = serial.Serial(PORT, BAUD)
+#serial_port = serial.Serial(PORT, BAUD)
 
 path = None
 ready = False
