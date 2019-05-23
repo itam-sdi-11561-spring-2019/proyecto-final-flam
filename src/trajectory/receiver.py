@@ -70,7 +70,7 @@ def publish(path):
         pose.y = p[1]
         pose.theta = p[2]
 
-        arr.poses.append(pos)
+        arr.poses.append(pose)
 
     pub.publish(arr)
 
