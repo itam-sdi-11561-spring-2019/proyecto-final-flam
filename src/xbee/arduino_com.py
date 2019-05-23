@@ -6,6 +6,7 @@ import serial
 import math
 import numpy as np
 from graphical_client.msg import Pose2D_Array
+from geometry_msgs.msg import Pose2D
 
 # GLOBAL VARIABLES
 PORT = '/dev/ttyUSB0'
@@ -17,20 +18,20 @@ ready = False
 tolerance = 20
 
 def get_distance(start,end):
-    return math.sqrt(math.power(start[0] - end[0],2) + math.power(start[1] - end[1],2))
+    return math.sqrt(math.pow(start[0] - end[0],2) + math.pow(start[1] - end[1],2))
 
 def get_vel(omega):
-    r = 21
-    v = 630
+    r = 21.0
+    v = 630.0
     matrix = np.matrix('1 -57.5; 1 57.5')
 
     if omega == -1:
         vel = np.array([0,0])
     else:
         vector = np.array([v, omega])
-        vel = (1/r) * np.dot(matrix, omega)
+        vel = (1.0/r) * np.dot(matrix, vector)
 
-    print 'Sending {} as vel'.format(vel)
+    print "Sending " + str(vel) + " as vel"
 
     #send_signal(vel)
 
@@ -54,7 +55,7 @@ def send_signal(vel):
 def update_robot(pos):
     global path
     global ready
-    if ready:
+    if ready and len(path) > 0:
         current_pos = (pos.x,pos.y)
 
         distance_next = get_distance(current_pos, path[0])
@@ -63,11 +64,13 @@ def update_robot(pos):
             path.pop(0)
 
         if len(path) > 0:
-            theta = pos.theta + path[0]
+            print "Robot angle " + str(pos.theta)
+            print "Target angle" + str(path[0][2])
+            theta = path[0][2] - pos.theta
         else:
             theta = -1
 
-        print 'New angle {}'.format(theta)
+        print "New angle " + str(theta)
 
         get_vel(theta)
 
@@ -77,7 +80,7 @@ def get_path(trayectory):
     path = []
 
     for node in trayectory.poses:
-        path.append(node.x,node.y,node.theta)
+        path.append((node.x,node.y,node.theta))
 
     path = path[1:]
 
