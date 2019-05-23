@@ -31,6 +31,7 @@ tolerance = 20
 #---------------------------------------------------------
 #                  Aux functions
 #---------------------------------------------------------
+'''
 def get_distance(start,end):
     return math.sqrt(math.power(start[0] - end[0],2) + math.power(start[1] - end[1],2))
 
@@ -56,10 +57,28 @@ def send_signal(vel):
 
     left = np.uint8(vel[0])
     dir_l = np.unit8(1 if vel[0] > 0 else 0)
+'''
+
+def publish(path):
+    arr = Pose2D_Array()
+
+    for p in path:
+        pose = Pose2D()
+
+        pose.x = p[0]
+        pose.y = p[1]
+        pose.theta = p[2]
+
+        arr.poses.append(pos)
+
+    pub.publish(arr)
+
+    print 'Trajectory published'
 
 #---------------------------------------------------------
 #                    Logic functions
 #---------------------------------------------------------
+'''
 def update_robot(pos):
     global path
     current_pos = (pos.x,pos.y)
@@ -75,6 +94,7 @@ def update_robot(pos):
         theta = -1
 
     get_vel(theta)
+'''
 
 def calculate_trajectory():
     global path
@@ -95,7 +115,7 @@ def calculate_trajectory():
     
     print trajectory
 
-    path = trajectory[1:]
+    publish(trajectory)
 
 #---------------------------------------------------------
 #                  Callbacks
@@ -103,12 +123,17 @@ def calculate_trajectory():
 def robot_position(msg):
     global pos
 
+    pos.x = msg.x
+    pos.y = msg.y
+    pos.theta = msg.theta
+    '''
     if not ready:
         pos.x = msg.x
         pos.y = msg.y
         pos.theta = msg.theta
     else:
         update_robot(msg)
+    '''
 
 def final_position(msg):
     global end
@@ -135,6 +160,9 @@ def obstacle_position(msg, args):
 def receiver():
     rospy.init_node('receiver', anonymous=True)
     print "Node initialized"
+    
+    pub = rospy.Publisher('/trajectory', Pose2D_Array, queue_size=10)
+
     #Robot position
     rospy.Subscriber("/y_r0", Pose2D, robot_position)
 
@@ -147,7 +175,7 @@ def receiver():
         #Subscribe to n obstacles
         rospy.Subscriber(obstacle_id, Pose2D, obstacle_position,(obstacle_id))
     
-    rate = rospy.Rate(2) # 10hz
+    rate = rospy.Rate(1) # 10hz
 
     while not rospy.is_shutdown():
         rate.sleep()
