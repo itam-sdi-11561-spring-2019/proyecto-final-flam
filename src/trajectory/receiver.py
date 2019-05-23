@@ -24,14 +24,15 @@ ready = False
 #---------------------------------------------------------
 PORT = '/dev/ttyUSB0'
 BAUD = 9600
-serial_port = serial.Serial(PORT, BAUD)
+#serial_port = serial.Serial(PORT, BAUD)
 path = None
 tolerance = 20
+
+pub = None
 
 #---------------------------------------------------------
 #                  Aux functions
 #---------------------------------------------------------
-'''
 def get_distance(start,end):
     return math.sqrt(math.power(start[0] - end[0],2) + math.power(start[1] - end[1],2))
 
@@ -57,9 +58,9 @@ def send_signal(vel):
 
     left = np.uint8(vel[0])
     dir_l = np.unit8(1 if vel[0] > 0 else 0)
-'''
 
 def publish(path):
+    global pub
     arr = Pose2D_Array()
 
     for p in path:
@@ -78,7 +79,7 @@ def publish(path):
 #---------------------------------------------------------
 #                    Logic functions
 #---------------------------------------------------------
-'''
+
 def update_robot(pos):
     global path
     current_pos = (pos.x,pos.y)
@@ -94,7 +95,7 @@ def update_robot(pos):
         theta = -1
 
     get_vel(theta)
-'''
+
 
 def calculate_trajectory():
     global path
@@ -158,6 +159,7 @@ def obstacle_position(msg, args):
 #---------------------------------------------------------
 
 def receiver():
+    global pub
     rospy.init_node('receiver', anonymous=True)
     print "Node initialized"
     
