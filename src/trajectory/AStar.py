@@ -7,8 +7,8 @@ import matplotlib.pyplot as plt
 #--------------------------------
 #           GLOBAL VARIABLES  
 #--------------------------------
-x = 8000
-y = 8000
+x = 4000
+y = 4000
 
 finesse = 150
 width = int(math.ceil(150/finesse))

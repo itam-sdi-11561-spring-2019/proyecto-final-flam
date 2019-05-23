@@ -13,52 +13,17 @@ import pickle as pkl
 #               AStar variables
 #---------------------------------------------------------
 obstacles = {}
-pos = Pose2D()
+pos = None
 end = Pose2D()
 no_topics = 9
-no_robots = 6
+no_robots = 0
 ready = False
-
-#---------------------------------------------------------
-#               XBee variables
-#---------------------------------------------------------
-PORT = '/dev/ttyUSB0'
-BAUD = 9600
-#serial_port = serial.Serial(PORT, BAUD)
-path = None
-tolerance = 20
 
 pub = None
 
 #---------------------------------------------------------
 #                  Aux functions
 #---------------------------------------------------------
-def get_distance(start,end):
-    return math.sqrt(math.power(start[0] - end[0],2) + math.power(start[1] - end[1],2))
-
-def get_vel(omega):
-    r = 21
-    v = 630
-    matrix = np.matrix('1 -57.5; 1 57.5')
-
-    if omega == -1:
-        vel = np.array([0,0])
-    else:
-        vector = np.array([v, omega])
-        vel = (1/r) * np.dot(matrix, omega)
-
-    send_signal(vel)
-
-def send_signal(vel):
-    global serial
-    print 'Sending {} as vel'.format(vel)
-
-    right = np.uint8(vel[1])
-    dir_r = np.unit8(1 if vel[1] > 0 else 0)
-
-    left = np.uint8(vel[0])
-    dir_l = np.unit8(1 if vel[0] > 0 else 0)
-
 def publish(path):
     global pub
     arr = Pose2D_Array()
@@ -79,24 +44,6 @@ def publish(path):
 #---------------------------------------------------------
 #                    Logic functions
 #---------------------------------------------------------
-
-def update_robot(pos):
-    global path
-    current_pos = (pos.x,pos.y)
-
-    distance_next = get_distance(current_pos, path[0])
-
-    if distance_next < tolerance: 
-        path.pop(0)
-
-    if len(path) > 0:
-        theta = pos.theta
-    else:
-        theta = -1
-
-    get_vel(theta)
-
-
 def calculate_trajectory():
     global path
     print "Running A* module"
@@ -123,18 +70,11 @@ def calculate_trajectory():
 #---------------------------------------------------------
 def robot_position(msg):
     global pos
-
+    pos = Pose2D()
     pos.x = msg.x
     pos.y = msg.y
     pos.theta = msg.theta
-    '''
-    if not ready:
-        pos.x = msg.x
-        pos.y = msg.y
-        pos.theta = msg.theta
-    else:
-        update_robot(msg)
-    '''
+
 
 def final_position(msg):
     global end
@@ -150,7 +90,7 @@ def obstacle_position(msg, args):
     robot_id = args
     obstacles[robot_id] = msg
 
-    if not ready and len(obstacles.keys()) == no_robots:
+    if not ready and len(obstacles.keys()) == no_robots and not pos is None:
         ready = True
         calculate_trajectory()
 
