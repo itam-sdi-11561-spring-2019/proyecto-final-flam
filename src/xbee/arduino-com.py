@@ -84,6 +84,7 @@ def get_path(trayectory):
     ready = True
 
 def run():
+    print 'RUN function'
     rospy.init_node('xbee', anonymous=True)
     print "Node XBee initialized"
     #Robot position
