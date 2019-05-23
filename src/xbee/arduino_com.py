@@ -15,7 +15,7 @@ BAUD = 9600
 
 path = None
 ready = False
-tolerance = 20
+tolerance = 30
 
 def get_distance(start,end):
     return math.sqrt(math.pow(start[0] - end[0],2) + math.pow(start[1] - end[1],2))
@@ -55,10 +55,17 @@ def send_signal(vel):
 def update_robot(pos):
     global path
     global ready
+
     if ready and len(path) > 0:
         current_pos = (pos.x,pos.y)
 
+        print current_pos
+
+        print path[0]
+
         distance_next = get_distance(current_pos, path[0])
+
+        print distance_next
 
         if distance_next < tolerance:
             path.pop(0)
