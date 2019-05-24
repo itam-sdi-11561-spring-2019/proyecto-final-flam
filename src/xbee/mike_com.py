@@ -15,7 +15,7 @@ serial_port = serial.Serial(PORT, BAUD)
 
 path = None
 ready = False
-tolerance = 90
+tolerance = 100
 
 ignore_updates = 5
 counter = 0
@@ -25,16 +25,17 @@ def get_distance(start,end):
 
 def get_vel(omega):
     r = 21.0
-    v = 20*r;
+    v = 20*r
     k = 2*v/(math.pi*57.5)
     matrix = np.matrix('1 -57.5; 1 57.5')
 
     if omega == -np.inf:
         vel = np.array([[0,0]])
     elif math.abs(omega) > math.pi/2:
-        vel = math.copysign(np.array([[-20, 20]]), omega)
+        vel = np.array([[-20, 20]]) if omega < 0 else np.vector[[20, -20]]
     else:
         vector = np.array([v, 0])
+        # vector = np.array([v * math.cos(omega), 20 * math.sin(omega)])
         vel = (1.0/r) * np.dot(matrix, vector)
 
     send_signal(vel)

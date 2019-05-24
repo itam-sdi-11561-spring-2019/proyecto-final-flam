@@ -48,10 +48,14 @@ def get_theta(start, end):
 
     theta = 0
 
-    if y >= 0:
+    if y >= 0 and x >= 0:
         theta = math.atan2(x,y)
+    elif y < 0 and x >= 0:
+        theta = math.pi/2 + math.atan2(-y, x)
+    elif y < 0 and x < 0:
+        theta = math.pi + math.atan(-x, -y)
     else:
-        theta = math.pi + math.atan2(x,y)
+        theta = math.pi*2 - math.atan2(-x, y)
     
     theta = theta if theta <= 2*math.pi else 2*math.pi    
 
@@ -65,7 +69,7 @@ def calculate_trajectory():
     global path
     print "Running A* module"
     start = (pos.x,pos.y)
-    destination = (end.x,pos.y)
+    destination = (end.x,end.y)
     if no_robots == 0:
         start_0 = (start[0], start[1], 0)
         angle = get_theta(start,destination)
