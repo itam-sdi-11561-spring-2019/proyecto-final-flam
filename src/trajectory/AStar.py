@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 x = 4000
 y = 4000
 
-finesse = 150
+finesse = 200
 width = int(math.ceil(150/finesse))
 
 m = math.floor(y/finesse)

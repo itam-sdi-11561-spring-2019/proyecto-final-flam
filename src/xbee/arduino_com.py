@@ -15,14 +15,14 @@ serial_port = serial.Serial(PORT, BAUD)
 
 path = None
 ready = False
-tolerance = 30
+tolerance = 100
 
 def get_distance(start,end):
     return math.sqrt(math.pow(start[0] - end[0],2) + math.pow(start[1] - end[1],2))
 
 def get_vel(omega):
     r = 21.0
-    v = 570.0
+    v = 5.0
     matrix = np.matrix('1 -57.5; 1 57.5')
 
     if omega == -1:
@@ -56,6 +56,8 @@ def update_robot(pos):
     global path
     global ready
 
+    print str(len(path))
+
     if ready and len(path) > 0:
         current_pos = (pos.x,pos.y)
 
@@ -71,8 +73,6 @@ def update_robot(pos):
             path.pop(0)
 
         if len(path) > 0:
-            print "Robot angle " + str(pos.theta)
-            print "Target angle" + str(path[0][2])
             theta = path[0][2] - pos.theta
             theta = theta % (2*math.pi)
         else:
@@ -87,12 +87,13 @@ def get_path(trayectory):
     global ready
     path = []
 
-    for node in trayectory.poses:
-        path.append((node.x,node.y,node.theta))
+    if not ready:
+        for node in trayectory.poses:
+            path.append((node.x,node.y,node.theta))
 
-    path = path[1:]
+        path = path[1:]
 
-    ready = True
+        ready = True
 
 def run():
     print 'RUN function'

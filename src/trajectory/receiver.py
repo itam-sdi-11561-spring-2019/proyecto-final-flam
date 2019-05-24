@@ -14,21 +14,20 @@ import pickle as pkl
 #---------------------------------------------------------
 obstacles = {}
 pos = None
-end = Pose2D()
+end = None
 no_topics = 9
 no_robots = 0
 ready = False
 
-pub = None
+path = None
 
-#---------------------------------------------------------
-#                  Aux functions
-#---------------------------------------------------------
-def publish(path):
+def publish(final_path):
     global pub
+    global path
+
     arr = Pose2D_Array()
 
-    for p in path:
+    for p in final_path:
         pose = Pose2D()
 
         pose.x = p[0]
@@ -36,6 +35,8 @@ def publish(path):
         pose.theta = p[2]
 
         arr.poses.append(pose)
+
+    path = arr
 
     pub.publish(arr)
 
@@ -48,17 +49,16 @@ def calculate_trajectory():
     global path
     print "Running A* module"
     
-    obstacles_pos = []
-
-    for obs in obstacles:
-        obstacles_pos.append((obstacles[obs].x,obstacles[obs].y))
-    
-    start = (pos.x, pos.y)
-    destination = (end.x,end.y)
-
-    if len(obstacles_pos) == 0:
+    if no_robots == 0:
         trajectory = [start,destination]
     else:
+        obstacles_pos = []
+
+        for obs in obstacles:
+            obstacles_pos.append((obstacles[obs].x,obstacles[obs].y))
+        
+        start = (pos.x, pos.y)
+        destination = (end.x,end.y)
         trajectory = run_astar(obstacles_pos, start, destination)
     
     print trajectory
@@ -75,10 +75,12 @@ def robot_position(msg):
     pos.y = msg.y
     pos.theta = msg.theta
 
+    if no_robots == 0 and (not end is None):
+        calculate_trajectory()
 
 def final_position(msg):
     global end
-
+    end = Pose2D()
     end.x = msg.x
     end.y = msg.y
     end.theta = msg.theta
@@ -120,6 +122,8 @@ def receiver():
     rate = rospy.Rate(1) # 10hz
 
     while not rospy.is_shutdown():
+        if not path is None:
+            pub.publish(arr)
         rate.sleep()
 
 if __name__ == '__main__':
