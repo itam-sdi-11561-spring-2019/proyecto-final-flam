@@ -17,7 +17,7 @@ path = None
 ready = False
 tolerance = 100
 
-ignore_updates = 5
+ignore_updates = 0
 counter = 0
 
 def get_distance(start,end):
@@ -25,17 +25,17 @@ def get_distance(start,end):
 
 def get_vel(omega):
     r = 21.0
-    v = 20*r
+    v = 36*r
     k = 2*v/(math.pi*57.5)
-    matrix = np.matrix('1 -57.5; 1 57.5')
+    matrix = np.matrix('1 57.5; 1 -57.5')
 
     if omega == -np.inf:
         vel = np.array([[0,0]])
-    elif math.abs(omega) > math.pi/2:
-        vel = np.array([[-20, 20]]) if omega < 0 else np.vector[[20, -20]]
+    elif abs(omega) > math.pi/2:
+        vel = np.array([[-12, 12]]) if omega < 0 else np.array([[12, -12]])
     else:
-        vector = np.array([v, 0])
-        # vector = np.array([v * math.cos(omega), 20 * math.sin(omega)])
+        vector = np.array([v, k*omega])
+        #vector = np.array([v * math.cos(omega), 20 * math.sin(omega)])
         vel = (1.0/r) * np.dot(matrix, vector)
 
     send_signal(vel)
@@ -75,8 +75,8 @@ def update_robot(pos):
         current_pos = (pos.x, pos.y)
         distance_next = get_distance(current_pos, path[0])
 
-        while distance_next < tolerance:
-            p = path.pop()
+        while distance_next < tolerance and len(path) > 0:
+            p = path.pop(0)
             print "Point Reached: " + str(p)
             print "Distance: " + str(distance_next)
             distance_next = get_distance(current_pos, path[0])

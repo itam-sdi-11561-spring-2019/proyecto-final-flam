@@ -1,8 +1,0 @@
-<launch>
-
-
-  <node pkg="graphical_client" type="graphical_client_node" name="graphical_client_node" output="screen" />
-
-  
-
-</launch>

@@ -16,8 +16,10 @@ obstacles = {}
 pos = None
 end = None
 no_topics = 9
-no_robots = 0
+no_robots = 2
 ready = False
+
+pub = None
 
 path = None
 
@@ -155,8 +157,8 @@ def receiver():
     rate = rospy.Rate(1) # 10hz
 
     while not rospy.is_shutdown():
-        #if< not path is None:
-        #    pub.publish(path)
+        if not path is None:
+            pub.publish(path)
         rate.sleep()
 
 if __name__ == '__main__':

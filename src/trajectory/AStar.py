@@ -7,10 +7,10 @@ import matplotlib.pyplot as plt
 #--------------------------------
 #           GLOBAL VARIABLES  
 #--------------------------------
-x = 4000
+x = 3000
 y = 4000
 
-finesse = 200
+finesse = 300
 width = int(math.ceil(150/finesse))
 
 m = int(math.floor(y/finesse))
@@ -88,7 +88,7 @@ def is_blocked(obstacle, matrix_pos):
     
     distance = np.sqrt(np.power(x - obstacle[0],2) + np.power(y - obstacle[1],2))
     
-    return 1 if distance > 200 else 0 
+    return 1 if distance > 800 else 0 
 
 
 #----------------------------------------------------------------
