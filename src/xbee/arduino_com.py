@@ -15,14 +15,17 @@ serial_port = serial.Serial(PORT, BAUD)
 
 path = None
 ready = False
-tolerance = 100
+tolerance = 150
+
+ignore_updates = 5
+counter = 0
 
 def get_distance(start,end):
     return math.sqrt(math.pow(start[0] - end[0],2) + math.pow(start[1] - end[1],2))
 
 def get_vel(omega):
     r = 21.0
-    v = 5.0
+    v = 100.0
     matrix = np.matrix('1 -57.5; 1 57.5')
 
     if omega == -1:
@@ -39,13 +42,20 @@ def get_vel(omega):
 def send_signal(vel):
     global serial
 
-    right = np.uint8(vel[0,1])
-    dir_r = np.uint8(1 if vel[0,1] > 0 else 0)
+    global ignore_updates
+    global counter
+    if counter >= ignore_updates:
+        right = np.uint8(vel[0,1])
+        dir_r = np.uint8(1 if vel[0,1] > 0 else 0)
 
-    left = np.uint8(vel[0,0])
-    dir_l = np.uint8(1 if vel[0,0] > 0 else 0)
+        left = np.uint8(vel[0,0])
+        dir_l = np.uint8(1 if vel[0,0] > 0 else 0)
 
-    serial_port.write(bytearray([right, dir_r, left, dir_l]))
+        serial_port.write(bytearray([right, dir_r, left, dir_l]))
+    else:
+        counter += 1
+
+    
 
 #--------------------------------------------------------
 #                   CALLBACKS
@@ -55,7 +65,8 @@ def send_signal(vel):
 def update_robot(pos):
     global path
     global ready
-    
+
+
     if not path is None:
         print str(len(path))
 
@@ -75,7 +86,8 @@ def update_robot(pos):
 
         if len(path) > 0:
             theta = path[0][2] - pos.theta
-            theta = theta % (2*math.pi)
+            theta = (theta + math.pi) % (2*math.pi) - math.pi
+
         else:
             theta = -1
 
@@ -105,7 +117,7 @@ def run():
     # Get trajectory from AStar node
     rospy.Subscriber("/trajectory", Pose2D_Array, get_path)
 
-    rate = rospy.Rate(2) # 10hz
+    rate = rospy.Rate(10) # 10hz
 
     while not rospy.is_shutdown():
         rate.sleep()

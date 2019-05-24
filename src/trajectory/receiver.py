@@ -126,7 +126,9 @@ def obstacle_position(msg, args):
 
 def receiver():
     global pub
+    global path
     rospy.init_node('receiver', anonymous=True)
+    
     print "Node initialized"
     
     pub = rospy.Publisher('/trajectory', Pose2D_Array, queue_size=10)
@@ -147,7 +149,7 @@ def receiver():
 
     while not rospy.is_shutdown():
         if not path is None:
-            pub.publish(arr)
+            pub.publish(path)
         rate.sleep()
 
 if __name__ == '__main__':
