@@ -25,16 +25,17 @@ def get_distance(start,end):
 
 def get_vel(omega):
     r = 21.0
-    v = 400.0
+    v = 20*r;
+    k = 2*v/(math.pi*57.5)
     matrix = np.matrix('1 -57.5; 1 57.5')
 
-    if omega == -1:
+    if omega == -np.inf:
         vel = np.array([[0,0]])
+    elif math.abs(omega) > math.pi/2:
+        vel = math.copysign(np.array([[-20, 20]]), omega)
     else:
         vector = np.array([v, 0])
         vel = (1.0/r) * np.dot(matrix, vector)
-
-    print "Sending " + str(vel) + " as vel"
 
     send_signal(vel)
 
@@ -71,12 +72,7 @@ def update_robot(pos):
 
     if ready and len(path) > 0:
         current_pos = (pos.x, pos.y)
-
-        print "Robot Position: " + str(current_pos)
-
         distance_next = get_distance(current_pos, path[0])
-
-        print distance_next
 
         while distance_next < tolerance:
             p = path.pop()
@@ -92,7 +88,7 @@ def update_robot(pos):
                 theta += 2*math.pi
 
         else:
-            theta = -1
+            theta = -np.inf
 
         print "New angle " + str(theta)
 
