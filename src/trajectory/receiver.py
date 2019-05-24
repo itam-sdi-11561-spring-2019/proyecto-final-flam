@@ -92,26 +92,29 @@ def calculate_trajectory():
 #---------------------------------------------------------
 def robot_position(msg):
     global pos
-
+    global ready
     print "Recibi inicio"
-
-    pos = Pose2D()
-    pos.x = msg.x
-    pos.y = msg.y
-    pos.theta = msg.theta
+    
+    if not ready:
+        pos = Pose2D()
+        pos.x = msg.x
+        pos.y = msg.y
+        pos.theta = msg.theta
 
     if no_robots == 0 and (not end is None):
+        ready = True
         calculate_trajectory()
 
 def final_position(msg):
     global end
-
+    global ready
     print "Recibi meta"
-
-    end = Pose2D()
-    end.x = msg.x
-    end.y = msg.y
-    end.theta = msg.theta
+   
+    if not ready:
+        end = Pose2D()
+        end.x = msg.x
+        end.y = msg.y
+        end.theta = msg.theta
 
 def obstacle_position(msg, args):
     global obstacles
@@ -135,7 +138,7 @@ def receiver():
     
     print "Node initialized"
     
-    pub = rospy.Publisher('/trajectory', Pose2D_Array, queue_size=10)
+    pub = rospy.Publisher('/final_path', Pose2D_Array, queue_size=10)
 
     #Robot position
     rospy.Subscriber("/y_r0", Pose2D, robot_position)
@@ -152,8 +155,8 @@ def receiver():
     rate = rospy.Rate(1) # 10hz
 
     while not rospy.is_shutdown():
-        if not path is None:
-            pub.publish(path)
+        #if< not path is None:
+        #    pub.publish(path)
         rate.sleep()
 
 if __name__ == '__main__':

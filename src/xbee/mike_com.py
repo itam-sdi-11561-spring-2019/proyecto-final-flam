@@ -47,10 +47,10 @@ def send_signal(vel):
     global ignore_updates
     global counter
     if counter >= ignore_updates:
-        right = np.uint8(vel[0,1])
+        right = np.uint8(abs(vel[0,1]))
         dir_r = np.uint8(1 if vel[0,1] > 0 else 0)
 
-        left = np.uint8(vel[0,0])
+        left = np.uint8(abs(vel[0,0]))
         dir_l = np.uint8(1 if vel[0,0] > 0 else 0)
         print "Vel der: " + str(right) + "\nDireccion: " + str(dir_r) + "\nVel izq : " + str(left) + "\nDireccion: " + str(dir_l)
         serial_port.write(bytearray([right, dir_r, left, dir_l]))
@@ -103,7 +103,6 @@ def get_path(trayectory):
         path = []
         for node in trayectory.poses:
             path.append((node.x,node.y,node.theta))
-	print path
         path = path[1:]
         print path
         ready = True
@@ -115,7 +114,7 @@ def run():
     #Robot position
     rospy.Subscriber("/y_r0", Pose2D, update_robot)
     # Get trajectory from AStar node
-    rospy.Subscriber("/trajectory", Pose2D_Array, get_path)
+    rospy.Subscriber("/final_path", Pose2D_Array, get_path)
 
     rate = rospy.Rate(10) # 10hz
 
