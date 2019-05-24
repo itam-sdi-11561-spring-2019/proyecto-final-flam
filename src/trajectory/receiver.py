@@ -42,23 +42,41 @@ def publish(final_path):
 
     print 'Trajectory published'
 
+def get_theta(start, end):
+    x = end[0] - start[0]
+    y = end[1] - start[1]
+
+    theta = 0
+
+    if y >= 0:
+        theta = math.atan2(x,y)
+    else:
+        theta = math.pi + math.atan2(x,y)
+    
+    theta = theta if theta <= 2*math.pi else 2*math.pi    
+
+    return theta
+
+
 #---------------------------------------------------------
 #                    Logic functions
 #---------------------------------------------------------
 def calculate_trajectory():
     global path
     print "Running A* module"
-    
+    start = (pos.x,pos.y)
+    destination = (end.x,pos.y)
     if no_robots == 0:
-        trajectory = [start,destination]
+        start_0 = (start[0], start[1], 0)
+        angle = get_theta(start,destination)
+        dest_0 = (destination[0], destination[1],angle)
+        trajectory = [start_0,dest_0]
     else:
         obstacles_pos = []
 
         for obs in obstacles:
             obstacles_pos.append((obstacles[obs].x,obstacles[obs].y))
         
-        start = (pos.x, pos.y)
-        destination = (end.x,end.y)
         trajectory = run_astar(obstacles_pos, start, destination)
     
     print trajectory
@@ -70,6 +88,9 @@ def calculate_trajectory():
 #---------------------------------------------------------
 def robot_position(msg):
     global pos
+
+    print "Recibi inicio"
+
     pos = Pose2D()
     pos.x = msg.x
     pos.y = msg.y
@@ -80,6 +101,9 @@ def robot_position(msg):
 
 def final_position(msg):
     global end
+
+    print "Recibi meta"
+
     end = Pose2D()
     end.x = msg.x
     end.y = msg.y

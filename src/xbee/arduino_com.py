@@ -55,8 +55,9 @@ def send_signal(vel):
 def update_robot(pos):
     global path
     global ready
-
-    print str(len(path))
+    
+    if not path is None:
+        print str(len(path))
 
     if ready and len(path) > 0:
         current_pos = (pos.x,pos.y)

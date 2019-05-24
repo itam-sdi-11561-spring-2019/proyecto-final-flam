@@ -13,8 +13,8 @@ y = 4000
 finesse = 200
 width = int(math.ceil(150/finesse))
 
-m = math.floor(y/finesse)
-n = math.floor(x/finesse)
+m = int(math.floor(y/finesse))
+n = int(math.floor(x/finesse))
 
 top = (m*finesse)/2
 
