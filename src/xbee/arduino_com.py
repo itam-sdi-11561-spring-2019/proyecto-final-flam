@@ -15,7 +15,7 @@ serial_port = serial.Serial(PORT, BAUD)
 
 path = None
 ready = False
-tolerance = 150
+tolerance = 90
 
 ignore_updates = 5
 counter = 0
@@ -25,13 +25,13 @@ def get_distance(start,end):
 
 def get_vel(omega):
     r = 21.0
-    v = 100.0
+    v = 400.0
     matrix = np.matrix('1 -57.5; 1 57.5')
 
     if omega == -1:
-        vel = np.array([0,0])
+        vel = np.array([[0,0]])
     else:
-        vector = np.array([v, omega])
+        vector = np.array([v, 0])
         vel = (1.0/r) * np.dot(matrix, vector)
 
     print "Sending " + str(vel) + " as vel"
@@ -66,9 +66,8 @@ def update_robot(pos):
     global path
     global ready
 
-
     if not path is None:
-        print str(len(path))
+        print path
 
     if ready and len(path) > 0:
         current_pos = (pos.x,pos.y)
@@ -82,6 +81,7 @@ def update_robot(pos):
         print distance_next
 
         if distance_next < tolerance:
+            print "Removing node"
             path.pop(0)
 
         if len(path) > 0:
@@ -98,14 +98,14 @@ def update_robot(pos):
 def get_path(trayectory):
     global path
     global ready
-    path = []
 
     if not ready:
+        path = []
         for node in trayectory.poses:
             path.append((node.x,node.y,node.theta))
-
+	print path
         path = path[1:]
-
+        print path
         ready = True
 
 def run():
